@@ -1,4 +1,4 @@
 # calculator
 Calculator Project using HTML,CSS, and JavaScript!
 
-Not complete still fixing bugs/errors
+Live Preview Here https://hyxenon.github.io/calculator/
