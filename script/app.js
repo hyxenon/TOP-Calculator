@@ -1,123 +1,127 @@
 const numberBtns = document.querySelectorAll(".btn-numbers")
 const operatorBtns = document.querySelectorAll(".btn-operator")
 const equalsBtn = document.querySelector(".btn-equals")
-const previous = document.getElementById("previous")
-const current = document.getElementById("current")
+const currentElement = document.getElementById("current")
+const previousElement = document.getElementById("previous")
 const clearBtn = document.querySelector(".clear-btn")
 const deleteBtn = document.querySelector(".delete-btn")
 
-// ------Variables-------
-let previousValue = ""
-// let currentValue = ""
-let currentValue = ""
-let previousString = ""
-let operator = ""
+let currentDisplay = ""
+let previousDisplay = ""
+let lastOperator = ""
+let haveEquals = false
+let changed = false
 let haveDot = false
 
 
-
-
-// ------Events Listener------
-
-// number buttons
+// --------Click Event Listener---------
+// --------Number Buttons---------
 numberBtns.forEach((btn)=>{
     btn.addEventListener("click",(e)=>{
-        appendNumber(e.currentTarget.dataset.value)
+        const dataValue = e.currentTarget.dataset.value
+        if(haveDot && dataValue == ".")return
+        if(dataValue == "."){
+            haveDot = true
+        }
+
+        currentDisplay += dataValue
+        currentElement.textContent = currentDisplay
     })
 })
-
-
-// operator buttons
+// --------Operator Buttons---------
 operatorBtns.forEach((btn)=>{
     btn.addEventListener("click",(e)=>{
-        if(currentValue != "" && previousValue !=""){
-            let result = operate(operator,parseFloat(previousValue),parseFloat(currentValue))
-            operator = e.currentTarget.dataset.value
-            previousValue = result
-            previousString = ""
-            displayPrevious(operator,previousValue)
-            current.textContent = result
-            currentValue = ""
-            return
-        }
-        operator = e.currentTarget.dataset.value
-        if(previousString != ""){
-            displayPrevious(operator,previousValue)
-            return
-        }
-       
-        if(!currentValue)return
-        previousValue = currentValue
-        currentValue = ""
+        const operator = e.currentTarget.dataset.value
         haveDot = false
-        displayPrevious(operator,previousValue)
+
        
+        if (!currentDisplay){
+            currentDisplay = 0
+        }
+        
+        if(haveEquals && !changed){
+            previousElement.textContent = previousElement.textContent.slice(0,-2)
+            changed = true
+        }
+
+        if(previousDisplay && currentDisplay == "."){
+            currentDisplay = 0
+            currentElement.textContent = "0"
+        }
+
+        if(currentDisplay && previousDisplay){
+            let result = operate(lastOperator,parseFloat(previousDisplay),parseFloat(currentDisplay))
+            previousDisplay = result
+            previousElement.textContent = `${previousDisplay} ${operator}`
+            currentDisplay = ""
+            currentElement.textContent = result
+            lastOperator = operator
+            return
+        }
+        lastOperator = operator
+        if(previousDisplay && !currentDisplay){
+            previousElement.textContent = `${previousElement.textContent.slice(0,-1)} ${operator}`
+            currentDisplay = ""
+            return
+        }
+
+        // Else
+        previousDisplay = currentDisplay
+        previousElement.textContent = `${previousDisplay} ${operator}`
+        currentDisplay = ""
         
     })
 })
-
-// equals button
-equalsBtn.addEventListener("click",result)
-
-// clear button
-clearBtn.addEventListener("click",clear)
-// delete button
-
-deleteBtn.addEventListener('click',remove)
-
-function clear(){
-    previousValue = ""
-    previousString = ""
-    currentValue = ""
+// --------Equal Button---------
+equalsBtn.addEventListener("click",()=>{
+    if(!currentDisplay || !previousDisplay)return
+    if(previousDisplay && currentDisplay == "."){
+        currentDisplay = 0
+    }
+    let result = operate(lastOperator,parseFloat(previousDisplay),parseFloat(currentDisplay))
+    previousElement.textContent = `${previousDisplay} ${lastOperator} ${currentDisplay} = `
+    currentElement.textContent = result
+    previousDisplay = result
+    currentDisplay = ""
+    haveEquals = true
     haveDot = false
-    previous.textContent = 0
-    current.textContent = 0
+    changed = false
+})
+
+// --------Clear button---------
+clearBtn.addEventListener("click",()=>{
+    currentDisplay = ""
+    previousDisplay = ""
+    lastOperator = ""
+    haveEquals = false
+    changed = false
+    haveDot = false
+    currentElement.textContent = "0"
+    previousElement.textContent = "0"
+})
+
+// --------Remove button---------
+deleteBtn.addEventListener("click",()=>{
+    currentDisplay = currentDisplay.slice(0,-1)
+    currentElement.textContent = currentElement.textContent.slice(0,-1)
+})
+
+// --------Functions---------
+function add(previous,current){
+    return previous + current
 }
 
-function remove(){
-    
+function substract(previous,current){
+    return previous - current
 }
 
-function result(){
-    if(!currentValue || !previousValue)return
-    let result = operate(operator,parseFloat(previousValue),parseFloat(currentValue))
-    previousString += `${previousValue} = `
-    previous.textContent = previousString
-    previousValue = result
-    currentValue = ""
-    current.textContent = result
+function multiply(previous,current){
+    return previous * current
 }
 
-function displayPrevious(operator,previousValue){
-    if(previousString != ""){
-        previousString = previousString.slice(0,-2)
-        previousString = `${previousString}${operator} `
-        previous.textContent = previousString
-        console.log("previous",previousValue)
-        console.log("current",currentValue)
-        return
-    }
-    previousString += `${previousValue} ${operator} `
-    previous.textContent = previousString
+function divide(previous,current){
+    return previous / current
 }
-
-function appendNumber(dataValue){
-
-    if(dataValue == "." && haveDot){
-        return
-    }else if(dataValue =="." && haveDot == false){
-        haveDot = true
-    }
-
-    let value = dataValue
-    currentValue += value
-    current.textContent = currentValue
-
-
-}
-
-
-
 
 function operate(operator,previous,current){
     let result = 0
@@ -138,25 +142,3 @@ function operate(operator,previous,current){
 
     return result
 }
-
-
-function add(previous,current){
-    return previous + current
-}
-
-function substract(previous,current){
-    return previous - current
-}
-
-function multiply(previous,current){
-    return previous * current
-}
-
-function divide(previous,current){
-    return previous / current
-}
-
-
-
-
-

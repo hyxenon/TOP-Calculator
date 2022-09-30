@@ -1,0 +1,30 @@
+[33mcommit 5fb4c3a23daf82dcc85754d8ee86be1ef53d8867[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Merge: 7c5c236 70296fd
+Author: Justine Edward Santos <hydxenonmain@gmail.com>
+Date:   Fri Sep 30 14:41:07 2022 +0800
+
+    Merge branch 'main' of github.com:hyxenon/calculator
+
+[33mcommit 7c5c2368fec241eed265d1d4a9dbad55a2fc6afa[m
+Author: Justine Edward Santos <hydxenonmain@gmail.com>
+Date:   Fri Sep 30 14:38:45 2022 +0800
+
+    fixed 80% bugs and Add Previous display
+
+[33mcommit 70296fd2d0cc0fde659127d4a0492f93f3c9d359[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Justine Edward Santos <100521296+hyxenon@users.noreply.github.com>
+Date:   Wed Sep 28 14:29:56 2022 +0800
+
+    Update README.md
+
+[33mcommit 42f191648dc7e78d3216b0b26013d9ae95d99229[m
+Author: Justine Edward Santos <hydxenonmain@gmail.com>
+Date:   Wed Sep 28 14:28:56 2022 +0800
+
+    Edit index.html,style.css,script.js
+
+[33mcommit c6a4ff059a76c68bdd8a4a2b33123e2b9ef46522[m
+Author: Justine Edward Santos <100521296+hyxenon@users.noreply.github.com>
+Date:   Wed Sep 28 10:01:43 2022 +0800
+
+    Initial commit
