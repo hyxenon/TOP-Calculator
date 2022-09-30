@@ -1,149 +1,162 @@
-const resultEle = document.getElementById("result")
-const btns = document.querySelectorAll(".btn")
+const numberBtns = document.querySelectorAll(".btn-numbers")
+const operatorBtns = document.querySelectorAll(".btn-operator")
+const equalsBtn = document.querySelector(".btn-equals")
+const previous = document.getElementById("previous")
+const current = document.getElementById("current")
 const clearBtn = document.querySelector(".clear-btn")
 const deleteBtn = document.querySelector(".delete-btn")
-let firstNumber = 0
-let secondNumber = 0
-let lastValue = 0
-let operator
-let turn = "firstNumber"
-let oneTime = 0
-btns.forEach((btn)=>{
+
+// ------Variables-------
+let previousValue = ""
+// let currentValue = ""
+let currentValue = ""
+let previousString = ""
+let operator = ""
+let haveDot = false
+
+
+
+
+// ------Events Listener------
+
+// number buttons
+numberBtns.forEach((btn)=>{
     btn.addEventListener("click",(e)=>{
-        const dataValue = e.currentTarget.dataset.value
-        
+        appendNumber(e.currentTarget.dataset.value)
+    })
+})
 
-        // check if the user input decimal point more than one
-        if(dataValue == "."){
-            if(oneTime == 1){
-                return
-            }else{
-                oneTime++
-            }
+
+// operator buttons
+operatorBtns.forEach((btn)=>{
+    btn.addEventListener("click",(e)=>{
+        if(currentValue != "" && previousValue !=""){
+            let result = operate(operator,parseFloat(previousValue),parseFloat(currentValue))
+            operator = e.currentTarget.dataset.value
+            previousValue = result
+            previousString = ""
+            displayPrevious(operator,previousValue)
+            current.textContent = result
+            currentValue = ""
+            return
         }
-
-        // check if the user click equals button
-        if(dataValue == "="){
-          equals()
-          return
+        operator = e.currentTarget.dataset.value
+        if(previousString != ""){
+            displayPrevious(operator,previousValue)
+            return
         }
-
-
-        // check if the user click operator button
-        if(dataValue == "/" || dataValue == "*" || dataValue == "-" || dataValue == "+"){
-            
-            oneTime = 0
-            
-            if(secondNumber !=0){
-                equals()
-                operator = dataValue
-                return
-            }
-            operator = dataValue
-            if(turn == "firstNumber"){
-                turn = "secondNumber"
-            }
-            return  
-        } 
-
-
-
-        // set the first number and second number and input them in the textbox
-        if(turn == "firstNumber"){
-            firstNumber += dataValue
-            resultEle.textContent = firstNumber.slice(1)
-        }else{
-            secondNumber += dataValue
-            resultEle.textContent = secondNumber.slice(1)
-        }
-            
+       
+        if(!currentValue)return
+        previousValue = currentValue
+        currentValue = ""
+        haveDot = false
+        displayPrevious(operator,previousValue)
+       
         
     })
 })
 
-// -----CLEAR BUTTON--------
-clearBtn.addEventListener("click",()=>{
-    firstNumber = 0
-    secondNumber = 0
-    lastValue = 0
-    operator = 0
-    turn = "firstNumber"
-    resultEle.textContent = 0
-})
-// --------DELETE BUTTON------
-deleteBtn.addEventListener("click",()=>{
-    resultEle.textContent = resultEle.textContent.slice(0,-1)
-    if(resultEle.textContent == ""){
-        resultEle.textContent = 0
-    }
+// equals button
+equalsBtn.addEventListener("click",result)
 
+// clear button
+clearBtn.addEventListener("click",clear)
+// delete button
 
-    if(turn == "firstNumber"){
-        // if(firstNumber == 0 ){
-        //     resultEle.textContent = 0
-        // }
-        firstNumber = resultEle.textContent
-    }else{
-        // if(secondNumber ==0){
-        //     resultEle.textContent = 0
-        // }
-        secondNumber = resultEle.textContent
-    }
+deleteBtn.addEventListener('click',remove)
 
-    console.log(firstNumber)
-    console.log(secondNumber)
-})
+function clear(){
+    previousValue = ""
+    previousString = ""
+    currentValue = ""
+    haveDot = false
+    previous.textContent = 0
+    current.textContent = 0
+}
 
-
-function equals(){
-    lastValue =  operate(operator,parseFloat(firstNumber),parseFloat(secondNumber))
-
-    if(lastValue % 1 != 0){
-     resultEle.textContent = lastValue.toFixed(2)
-    }else{
-     resultEle.textContent = lastValue
-    }
-
+function remove(){
     
-    firstNumber = lastValue
-    secondNumber = 0
-    operator = ""
-    turn = "secondNumber"
-    return
 }
-function add(num1,num2){
-    return num1 + num2
+
+function result(){
+    if(!currentValue || !previousValue)return
+    let result = operate(operator,parseFloat(previousValue),parseFloat(currentValue))
+    previousString += `${previousValue} = `
+    previous.textContent = previousString
+    previousValue = result
+    currentValue = ""
+    current.textContent = result
+}
+
+function displayPrevious(operator,previousValue){
+    if(previousString != ""){
+        previousString = previousString.slice(0,-2)
+        previousString = `${previousString}${operator} `
+        previous.textContent = previousString
+        console.log("previous",previousValue)
+        console.log("current",currentValue)
+        return
+    }
+    previousString += `${previousValue} ${operator} `
+    previous.textContent = previousString
+}
+
+function appendNumber(dataValue){
+
+    if(dataValue == "." && haveDot){
+        return
+    }else if(dataValue =="." && haveDot == false){
+        haveDot = true
+    }
+
+    let value = dataValue
+    currentValue += value
+    current.textContent = currentValue
+
+
 }
 
 
-function substract(num1,num2){
-    return num1 - num2
-}
 
-function multiply(num1,num2){
-    return num1 * num2
-}
 
-function divide(num1,num2){
-    return num1/num2
-}
-
-function operate(operator,num1,num2){
-    let result
+function operate(operator,previous,current){
+    let result = 0
     switch(operator){
         case "+":
-            result = add(num1,num2)
+            result = add(previous,current)
             break
         case "-":
-            result = substract(num1,num2)
+            result = substract(previous,current)
             break
         case "*":
-            result = multiply(num1,num2)
+            result = multiply(previous,current)
             break
         case "/":
-            result = divide(num1,num2)
+            result = divide(previous,current)
             break
     }
+
     return result
 }
+
+
+function add(previous,current){
+    return previous + current
+}
+
+function substract(previous,current){
+    return previous - current
+}
+
+function multiply(previous,current){
+    return previous * current
+}
+
+function divide(previous,current){
+    return previous / current
+}
+
+
+
+
 
