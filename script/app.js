@@ -12,6 +12,7 @@ let lastOperator = ""
 let haveEquals = false
 let changed = false
 let haveDot = false
+let cantRemove = false
 
 
 // --------Click Event Listener---------
@@ -23,7 +24,7 @@ numberBtns.forEach((btn)=>{
         if(dataValue == "."){
             haveDot = true
         }
-
+        cantRemove = false
         currentDisplay += dataValue
         currentElement.textContent = currentDisplay
     })
@@ -56,6 +57,7 @@ operatorBtns.forEach((btn)=>{
             currentDisplay = ""
             currentElement.textContent = result
             lastOperator = operator
+            cantRemove = true
             return
         }
         lastOperator = operator
@@ -86,6 +88,7 @@ equalsBtn.addEventListener("click",()=>{
     haveEquals = true
     haveDot = false
     changed = false
+    cantRemove = true
 })
 
 // --------Clear button---------
@@ -96,12 +99,14 @@ clearBtn.addEventListener("click",()=>{
     haveEquals = false
     changed = false
     haveDot = false
+    cantRemove = false
     currentElement.textContent = "0"
     previousElement.textContent = "0"
 })
 
 // --------Remove button---------
 deleteBtn.addEventListener("click",()=>{
+    if(cantRemove)return
     currentDisplay = currentDisplay.slice(0,-1)
     currentElement.textContent = currentElement.textContent.slice(0,-1)
 })
